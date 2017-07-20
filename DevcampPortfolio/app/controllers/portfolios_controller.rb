@@ -9,14 +9,15 @@ class PortfoliosController < ApplicationController
   
   def new
     @portfolio_item = Portfolio.new
+    3.times { @portfolio_item.technologies.build }
   end
 
   def create
-    @portfolio_item = Portfolio.new(params.require(:portfolio).permit(:title, :subtitle, :body))
+    @portfolio_item = Portfolio.new(params.require(:portfolio).permit(:title, :subtitle, :body, technologies_attributes: [:name]))
 
     respond_to do |format|
       if @portfolio_item.save
-        format.html { redirect_to @portfolio_item, notice: 'Your Portfolio is now live.' }
+        format.html { redirect_to portfolios_path, notice: 'Your Portfolio is now live.' }
       else
         format.html { render :new }
       end
@@ -24,10 +25,6 @@ class PortfoliosController < ApplicationController
   end
 
   def edit
-    @portfolio_item = Portfolio.find(params[:id])
-  end
-
-  def show
     @portfolio_item = Portfolio.find(params[:id])
   end
     
@@ -43,6 +40,10 @@ class PortfoliosController < ApplicationController
     end
   end
 
+  def show
+    @portfolio_item = Portfolio.find(params[:id])
+  end
+  
   def destroy
     # Perform the lookup
     @portfolio_item = Portfolio.find(params[:id])
